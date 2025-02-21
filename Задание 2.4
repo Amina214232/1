@@ -1,0 +1,67 @@
+program Amina;
+uses
+  crt;
+procedure ShowBytes(var data; size: Integer);
+var
+  i: Integer;
+begin
+  Write('Bytes: ');
+  for i := 0 to size - 1 do
+  begin
+    Write(Byte(PByte(@data)[i]), ' '); 
+  end;
+  WriteLn; // Перевод на новую строку
+end;
+procedure ShowShortStringBytes(const s: ShortString);
+var
+  i: Integer;
+begin
+  Write('Bytes of ShortString: ');
+  for i := 0 to SizeOf(s) - 1 do
+  begin
+    Write(Byte(PByte(@s)[i]), ' ');
+  end;
+  WriteLn; // Перевод на новую строку
+end;
+var
+  intVar: Integer;
+  longVar: LongInt;
+  realVar: Real;
+  charVar: Char;
+  shortStr: ShortString;  // Короткая строка
+  dynamicStr: String;     // Динамическая строка
+
+begin
+  clrscr;
+
+  // Пример значений переменных
+  intVar := 12345;
+  longVar := 1234567890;
+  realVar := 12.34;
+  charVar := 'A';
+  shortStr := 'Hello'; // Короткая строка
+  dynamicStr := 'Dynamic String'; // Динамическая строка
+  
+  // Вывод побайтового представления переменных
+  WriteLn('Побайтовое представление целого числа (Integer): ');
+  ShowBytes(intVar, SizeOf(intVar));
+  
+  WriteLn('Побайтовое представление длинного целого числа (LongInt): ');
+  ShowBytes(longVar, SizeOf(longVar));
+  
+  WriteLn('Побайтовое представление вещественного числа (Real): ');
+  ShowBytes(realVar, SizeOf(realVar));
+  
+  WriteLn('Побайтовое представление символа (Char): ');
+  ShowBytes(charVar, SizeOf(charVar));
+  
+  // Выводим побайтовое представление короткой строки
+  ShowShortStringBytes(shortStr);
+
+  // Выводим побайтовое представление динамической строки
+  WriteLn('Побайтовое представление динамической строки (String): ');
+  ShowBytes(Pointer(dynamicStr)^, Length(dynamicStr) * SizeOf(Char)); 
+
+  ReadLn; // Ожидание нажатия клавиши перед закрытием окна
+end.
+ 

@@ -1,65 +1,67 @@
-program Amina2;
+program Amina;
 
-uses SysUtils;
+uses crt;
 
-function DecimalToBinaryInteger(n: Integer): String; 
+function IntToStr(value: Integer): String;
 var
-  binary: String;
+  s: String;
 begin
-  binary := '';
-  
-  if n = 0 then
-    Binary := '0';
-    
-  while n > 0 do
+  s := '';
+  if value = 0 then
+    s := '0' // Обработка случая, когда значение равно 0
+  else
   begin
-    binary := Chr((n mod 2) + Ord('0')) + binary;
-    n := n div 2;
-  end;
-
-  DecimalToBinaryInteger := binary; 
-end;
-
-function DecimalToBinaryFractionPart(fraction: Real; precision: Integer): String;
-var
-  binaryFraction: String;
-  count: Integer;
-begin
-  binaryFraction := '';
-  count := 0;
-  
-  while (fraction > 0) and (count < precision) do
-  begin
-    fraction := fraction * 2;
-    if fraction >= 1 then
+    while value > 0 do
     begin
-      binaryFraction := binaryFraction + '1';
-      fraction := fraction - 1;
-    end
-    else
-      binaryFraction := binaryFraction + '0';
-      
-    count := count + 1;
+      s := Chr(48 + (value mod 10)) + s; // '0' имеет код 48
+      value := value div 10;
+    end;
   end;
-
-  DecimalToBinaryFractionPart := binaryFraction; 
+  IntToStr := s;
 end;
 
-function DecimalToBinary(decimal: Real; precision: Integer): String;
+function DecimalToBinary(num: Real; precision: Integer): String;
 var
   integerPart: Integer;
-  fractionPart: Real;
+  fractionalPart: Real;
   binaryInteger: String;
-  binaryFraction: String;
+  binaryFractional: String;
+  bit: Integer;
+  count: Integer;
 begin
-  integerPart := Trunc(decimal); // Целая часть
-  fractionPart := decimal - integerPart; // Дробная часть
-  
-  binaryInteger := DecimalToBinaryInteger(integerPart);
-  binaryFraction := DecimalToBinaryFractionPart(fractionPart, precision);
-  
-  if binaryFraction <> '' then
-    DecimalToBinary := binaryInteger + '.' + binaryFraction 
+  binaryInteger := '';
+  binaryFractional := '';
+
+  // Разделяем целую и дробную части
+  integerPart := Trunc(num);
+  fractionalPart := num - integerPart;
+
+  // Перевод целой части в двоичную систему
+  if integerPart = 0 then
+    binaryInteger := '0'
+  else
+  begin
+    while integerPart > 0 do
+    begin
+      binaryInteger := IntToStr(integerPart mod 2) + binaryInteger;
+      integerPart := integerPart div 2;
+    end;
+  end;
+
+  // Перевод дробной части в двоичную систему
+  count := 0;
+  while (fractionalPart > 0) and (count < precision) do
+  begin
+    fractionalPart := fractionalPart * 2;
+    bit := Trunc(fractionalPart);
+    binaryFractional := binaryFractional + IntToStr(bit);
+    fractionalPart := fractionalPart - bit;
+    Inc(count);
+  end;
+
+  // Формируем результирующую строку
+  if binaryFractional <> '' then
+    DecimalToBinary := binaryInteger + '.' + binaryFractional
   else
     DecimalToBinary := binaryInteger;
 end;
@@ -67,22 +69,17 @@ end;
 var
   number: Real;
   precision: Integer;
+  binaryRepresentation: String;
+
 begin
+  clrscr;
   Write('Введите дробное число: ');
   ReadLn(number);
   Write('Введите количество бит для дробной части: ');
   ReadLn(precision);
   
-  WriteLn('Двоичное представление: ', DecimalToBinary(number, precision));
+  binaryRepresentation := DecimalToBinary(number, precision);
+  WriteLn('Двоичное представление: ', binaryRepresentation);
+  
+  ReadLn; // Ожидание нажатия клавиши перед закрытием окна
 end.
-
-Вывод
-Выберите действие:
-1. Десятичное в двоичное
-2. Десятичное в восьмеричное
-3. Десятичное в шестнадцатеричное
-4. Двоичное в десятичное
-5. Шестнадцатеричное в десятичное
-Ваш выбор: 
-1
-Введите десятичное число: 4806
